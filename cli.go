@@ -36,14 +36,14 @@ func (cli *CLI) printChain() {
 	for {
 		block := bci.next()
 
-		fmt.Printf("Prev. hash: %x\n", block.prevBlockHash)
-		fmt.Printf("Data: %s\n", block.data)
-		fmt.Printf("Hash: %x\n", block.hash)
+		fmt.Printf("Prev. hash: %x\n", block.PrevBlockHash)
+		fmt.Printf("Data: %s\n", block.Data)
+		fmt.Printf("Hash: %x\n", block.Hash)
 		proofOfWork := newPow(block)
 		fmt.Printf("PoW: %s\n", strconv.FormatBool(proofOfWork.validate()))
 		fmt.Println()
 
-		if len(block.prevBlockHash) == 0 {
+		if len(block.PrevBlockHash) == 0 {
 			break
 		}
 	}

@@ -35,15 +35,15 @@ func (bc *blockchain) addBlock(data string) {
 	newBlock := newBlock(data, lastHash)		// create a new block
 	err = bc.db.Update(func(tx *bolt.Tx) error {		// write the new block to the database
 		b := tx.Bucket([]byte(blocksBucket))		// get the bucket
-		err := b.Put(newBlock.hash, newBlock.serialize())		// write the block to the bucket
+		err := b.Put(newBlock.Hash, newBlock.serialize())		// write the block to the bucket
 		if err != nil {		// check for errors
 			log.Panic(err)
 		}
-		err = b.Put([]byte("l"), newBlock.hash)		// update the last block hash
+		err = b.Put([]byte("l"), newBlock.Hash)		// update the last block hash
 		if err != nil {		// check for errors
 			log.Panic(err)
 		}
-		bc.tip = newBlock.hash		// update the tip of the blockchain
+		bc.tip = newBlock.Hash		// update the tip of the blockchain
 		return nil
 	})
 }
@@ -68,7 +68,7 @@ func (i *blockchainIterator) next() *block {
 		log.Panic(err)
 	}
 
-	i.currentHash = block.prevBlockHash		// update the current hash
+	i.currentHash = block.PrevBlockHash		// update the current hash
 	return block
 }
 
@@ -94,15 +94,15 @@ func newBlockchain() *blockchain {
 			if err != nil {		// check for errors
 				log.Panic(err)
 			}
-			err = b.Put(genesis.hash, genesis.serialize())		// write the genesis block to the bucket
+			err = b.Put(genesis.Hash, genesis.serialize())		// write the genesis block to the bucket
 			if err != nil {		// check for errors
 				log.Panic(err)
 			}
-			err = b.Put([]byte("l"), genesis.hash)		// update the last block hash
+			err = b.Put([]byte("l"), genesis.Hash)		// update the last block hash
 			if err != nil {		// check for errors
 				log.Panic(err)
 			}
-			tip = genesis.hash		// update the tip of the blockchain
+			tip = genesis.Hash		// update the tip of the blockchain
 		} else {
 			tip = b.Get([]byte("l"))		// if bucket exists, get the last block hash
 		}

@@ -9,11 +9,11 @@ import (
 
 
 type block struct {
-	timestamp int64
-	data []byte
-	prevBlockHash []byte
-	hash []byte
-	nonce int
+	Timestamp int64
+	Data []byte
+	PrevBlockHash []byte
+	Hash []byte
+	Nonce int
 }
 
 func newBlock(data string, prevBlockHash []byte) *block {
@@ -21,8 +21,8 @@ func newBlock(data string, prevBlockHash []byte) *block {
 	pow := newPow(block)
 	nonce, hash := pow.run()
 
-	block.hash = hash[:]
-	block.nonce = nonce
+	block.Hash = hash[:]
+	block.Nonce = nonce
 
 	return block
 }

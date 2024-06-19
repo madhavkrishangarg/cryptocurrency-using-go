@@ -24,9 +24,9 @@ func newPow(b *block) *proofOfWork { 			// create a new proof of work struct
 
 func (p *proofOfWork) prepareData(nonce int) []byte {	// prepare the data to be hashed
 	data := bytes.Join([][]byte{
-		p.block.prevBlockHash,
-		p.block.data,
-		[]byte(strconv.FormatInt(p.block.timestamp, 10)),
+		p.block.PrevBlockHash,
+		p.block.Data,
+		[]byte(strconv.FormatInt(p.block.Timestamp, 10)),
 		[]byte(strconv.FormatInt(int64(targetBits), 10)),
 		[]byte(strconv.FormatInt(int64(nonce), 10)),
 	}, []byte{})	// concatenate the byte slices, data = "prevBlockHash + data + timestamp + targetBits + nonce"
@@ -44,7 +44,7 @@ func (p *proofOfWork) run() (int, []byte) {	// run the proof of work algorithm
 		hashInt.SetBytes(hash[:])			// set the hash as a big.Int type
 
 		if hashInt.Cmp(p.target) == -1 {		// if the hash is less than the target, the block is mined
-			fmt.Printf("Block mined - data: %s\n, hash: %x\n", p.block.data, hash)
+			fmt.Printf("Block mined - data: %s\n, hash: %x\n", p.block.Data, hash)
 			fmt.Printf("Nonce: %d\n", nonce)
 			break
 		} else {
@@ -58,7 +58,7 @@ func (p *proofOfWork) run() (int, []byte) {	// run the proof of work algorithm
 func (p *proofOfWork) validate() bool {
 	var hashInt big.Int		// hashInt is a big.Int type to store the hash as an integer
 
-	data := p.prepareData(p.block.nonce)		
+	data := p.prepareData(p.block.Nonce)		
 	hash := sha256.Sum256(data)
 	hashInt.SetBytes(hash[:])
 
