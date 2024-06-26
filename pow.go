@@ -25,7 +25,7 @@ func newPow(b *block) *proofOfWork { 			// create a new proof of work struct
 func (p *proofOfWork) prepareData(nonce int) []byte {	// prepare the data to be hashed
 	data := bytes.Join([][]byte{
 		p.block.PrevBlockHash,
-		p.block.Data,
+		p.block.hashTransactions(),
 		[]byte(strconv.FormatInt(p.block.Timestamp, 10)),
 		[]byte(strconv.FormatInt(int64(targetBits), 10)),
 		[]byte(strconv.FormatInt(int64(nonce), 10)),
@@ -38,13 +38,14 @@ func (p *proofOfWork) run() (int, []byte) {	// run the proof of work algorithm
 	var hash [32]byte	// hash is a byte array of size 32
 	nonce := 0			// nonce is the number of iterations of the proof of work algorithm
 
+	fmt.Printf("Mining block")
 	for nonce < math.MaxInt64 {	 
 		data := p.prepareData(nonce) // prepare the data to be hashed
 		hash = sha256.Sum256(data)			// hash the data
 		hashInt.SetBytes(hash[:])			// set the hash as a big.Int type
 
 		if hashInt.Cmp(p.target) == -1 {		// if the hash is less than the target, the block is mined
-			fmt.Printf("Block mined - data: %s\n, hash: %x\n", p.block.Data, hash)
+			fmt.Printf("Block mined - data: %s\n, hash: %x\n", data, hash)
 			fmt.Printf("Nonce: %d\n", nonce)
 			break
 		} else {
