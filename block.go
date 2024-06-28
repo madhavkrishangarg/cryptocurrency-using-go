@@ -1,20 +1,19 @@
 package main
 
 import (
-	"time"
 	"bytes"
+	"crypto/sha256"
 	"encoding/gob"
 	"log"
-	"crypto/sha256"
+	"time"
 )
 
-
 type block struct {
-	Timestamp int64
+	Timestamp     int64
 	Transactions  []*Transaction
 	PrevBlockHash []byte
-	Hash []byte
-	Nonce int
+	Hash          []byte
+	Nonce         int
 }
 
 func newBlock(transactions []*Transaction, prevBlockHash []byte) *block {
@@ -51,27 +50,27 @@ func genesisBlock(coinbase *Transaction) *block {
 }
 
 func (b *block) serialize() []byte {
-	var result bytes.Buffer		// buffer to store the serialized block
-	encoder := gob.NewEncoder(&result)		// create a new encoder
+	var result bytes.Buffer            // buffer to store the serialized block
+	encoder := gob.NewEncoder(&result) // create a new encoder
 
-	err := encoder.Encode(b)		// encode the block
-	if err != nil {		// check for errors
-		log.Panic(err)		
-	}
-
-	return result.Bytes()		// return the serialized block
-}
-
-func deserialize(data []byte) *block {
-	var block block		// create a new block
-	decoder := gob.NewDecoder(bytes.NewReader(data))		// create a new decoder
-
-	err := decoder.Decode(&block)		// decode the data
-	if err != nil {		// check for errors
+	err := encoder.Encode(b) // encode the block
+	if err != nil {          // check for errors
 		log.Panic(err)
 	}
 
-	return &block		// return the deserialized block
+	return result.Bytes() // return the serialized block
+}
+
+func deserialize(data []byte) *block {
+	var block block                                  // create a new block
+	decoder := gob.NewDecoder(bytes.NewReader(data)) // create a new decoder
+
+	err := decoder.Decode(&block) // decode the data
+	if err != nil {               // check for errors
+		log.Panic(err)
+	}
+
+	return &block // return the deserialized block
 }
 
 func (b *block) hashTransactions() []byte {
