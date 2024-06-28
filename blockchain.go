@@ -77,7 +77,7 @@ func (bc *blockchain) findUnspentTransactions(pubKeyHash []byte) []Transaction {
 				}
 			}
 
-			if tx.isCoinbase() == false { // iterate over the inputs
+			if !tx.isCoinbase() { // iterate over the inputs
 				for _, in := range tx.Vin {
 					if in.usesKey(pubKeyHash) { // check if the input uses the key
 						inTxID := hex.EncodeToString(in.Txid)

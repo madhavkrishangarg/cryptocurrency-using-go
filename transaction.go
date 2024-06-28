@@ -49,13 +49,13 @@ func (tx *Transaction) setTXID() {
 //check whether the address initiated the transaction
 func (in *TXInput) usesKey(pubKeyHash []byte) bool {
 	lockingHash := HashPubKey(in.ScriptSig)
-	return bytes.Compare(lockingHash, pubKeyHash) == 0
+	return bytes.Equal(lockingHash, pubKeyHash)
 }
 
 //check whether the address is the recipient of the transaction
 func (out *TXOutput) isLockedWithKey(pubKeyHash []byte) bool {
 	lockingHash := HashPubKey(out.ScriptPubKey)
-	return bytes.Compare(lockingHash, pubKeyHash) == 0
+	return bytes.Equal(lockingHash, pubKeyHash)
 }
 
 
