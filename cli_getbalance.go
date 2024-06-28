@@ -9,13 +9,16 @@ func (cli *CLI) getBalance(address string) {
 	if !validateAddress(address) {
 		log.Panic("ERROR: Address is not valid")
 	}
-	bc := newBlockchain(address)
+	bc := newBlockchain()
+	UTXOSet := UTXOSet{bc}
+
+
 	defer bc.db.Close()
 
 	balance := 0
 	pubKeyHash := base58Decode([]byte(address))
 	pubKeyHash = pubKeyHash[1 : len(pubKeyHash)-4]
-	UTXOs := bc.findUTXO(pubKeyHash)
+	UTXOs := UTXOSet.findUTXO(pubKeyHash)
 
 	for _, out := range UTXOs {
 		balance += out.Value

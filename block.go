@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"encoding/gob"
 	"log"
 	"time"
@@ -74,14 +73,12 @@ func deserialize(data []byte) *block {
 }
 
 func (b *block) hashTransactions() []byte {
-	var txHashes [][]byte
-	var txHash [32]byte
+	var transactions [][]byte // create a new slice of byte slices
 
-	for _, tx := range b.Transactions {
-		txHashes = append(txHashes, tx.ID)
+	for _, tx := range b.Transactions { // iterate over the transactions
+		transactions = append(transactions, tx.ID) // append the transaction ID to the slice
 	}
 
-	txHash = sha256.Sum256(bytes.Join(txHashes, []byte{}))
-
-	return txHash[:]
+	mTree := newMerkleTree(transactions) // create a new Merkle tree
+	return mTree.RootNode.Data          // return the root node data
 }

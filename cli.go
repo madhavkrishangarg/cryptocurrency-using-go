@@ -9,26 +9,6 @@ import (
 
 type CLI struct{}
 
-// func (cli *CLI) createBlockchain(address string) {
-// 	bc := createBlockchain(address)
-// 	bc.db.Close()
-// 	fmt.Println("Done!")
-// }
-
-// func (cli *CLI) getBalance(address string) {
-// 	bc := newBlockchain(address)
-// 	defer bc.db.Close()
-
-// 	balance := 0
-// 	UTXOs := bc.findUTXO(HashPubKey(address))
-
-// 	for _, out := range UTXOs {
-// 		balance += out.Value
-// 	}
-
-// 	fmt.Printf("Balance of '%s': %d\n", address, balance)
-// }
-
 func (cli *CLI) printUsage() {
 	fmt.Println("Usage:")
 	fmt.Println("  createblockchain -address ADDRESS - Create a blockchain and send genesis block reward to ADDRESS")
@@ -37,6 +17,7 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  listaddresses - Lists all addresses from the wallet file")
 	fmt.Println("  printchain - Print all the blocks of the blockchain")
 	fmt.Println("  send -from FROM -to TO -amount AMOUNT - Send AMOUNT of coins from FROM address to TO")
+	fmt.Println("  reindexutxo - Rebuilds the UTXO set")
 }
 
 func (cli *CLI) validateArgs() {
@@ -45,41 +26,6 @@ func (cli *CLI) validateArgs() {
 		os.Exit(1)
 	}
 }
-
-// func (cli *CLI) addBlock(data string) {
-// 	cli.bc.addBlock(data)
-// 	fmt.Println("Success!")
-// }
-
-// func (cli *CLI) printChain() {
-// 	bc := newBlockchain("")
-// 	defer bc.db.Close()
-
-// 	bci := bc.iterator()
-
-// 	for {
-// 		block := bci.next()
-
-// 		fmt.Printf("Prev. hash: %x\n", block.PrevBlockHash)
-// 		fmt.Printf("Hash: %x\n", block.Hash)
-// 		pow := newPow(block)
-// 		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.validate()))
-// 		fmt.Println()
-
-// 		if len(block.PrevBlockHash) == 0 {
-// 			break
-// 		}
-// 	}
-// }
-
-// func (cli *CLI) send(from, to string, amount int) {
-// 	bc := newBlockchain(from)
-// 	defer bc.db.Close()
-
-// 	tx := newUTXOTransaction(from, to, amount, bc)
-// 	bc.mineBlock([]*Transaction{tx})
-// 	fmt.Println("Success!")
-// }
 
 func (cli *CLI) Run() {
 	cli.validateArgs()
@@ -100,6 +46,8 @@ func (cli *CLI) Run() {
 	sendFrom := sendCmd.String("from", "", "Source wallet address")
 	sendTo := sendCmd.String("to", "", "Destination wallet address")
 	sendAmount := sendCmd.Int("amount", 0, "Amount to send")
+
+	reindexUTXOcmd := flag.NewFlagSet("reindexutxo", flag.ExitOnError)
 
 	switch os.Args[1] {
 	case "createblockchain":
@@ -138,6 +86,12 @@ func (cli *CLI) Run() {
 			log.Panic(err)
 		}
 
+	case "reindexutxo":
+		err := reindexUTXOcmd.Parse(os.Args[2:])
+		if err != nil {
+			log.Panic(err)
+		}
+
 	default:
 		cli.printUsage()
 		os.Exit(1)
@@ -169,6 +123,10 @@ func (cli *CLI) Run() {
 
 	if printChainCmd.Parsed() {
 		cli.printChain()
+	}
+
+	if reindexUTXOcmd.Parsed() {
+		cli.reindexUTXO()
 	}
 
 	if sendCmd.Parsed() {
