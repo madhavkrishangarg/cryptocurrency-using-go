@@ -23,6 +23,8 @@ func (cli *CLI) send(from string, to string, amount int, nodeID string, mineNow 
 		log.Panic(err)
 	}
 	wallet := wallets.getWallet(from)
+	// log.Println("Public key: ", wallet.PublicKey)
+	// log.Println("Private key: ", wallet.PrivateKey)
 
 	tx := newUTXOTransaction(&wallet, to, amount, &UTXOSet)
 

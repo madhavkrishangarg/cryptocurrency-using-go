@@ -47,6 +47,7 @@ func (ws *Wallets) getAddresses() []string {
 }
 
 func (ws *Wallets) getWallet(address string) Wallet {
+    fmt.Println("address: ", address)
 	return *ws.Wallets[address]
 }
 
