@@ -5,8 +5,8 @@ import (
 	"strconv"
 )
 
-func (cli *CLI) printChain() {
-	bc := newBlockchain()
+func (cli *CLI) printChain(nodeID string) {
+	bc := newBlockchain(nodeID)
 	defer bc.db.Close()
 
 	bci := bc.iterator()
@@ -15,6 +15,7 @@ func (cli *CLI) printChain() {
 		block := bci.next()
 
 		fmt.Printf("============ Block %x ============\n", block.Hash)
+		fmt.Printf("Height: %d\n", block.Height)
 		fmt.Printf("Prev. block: %x\n", block.PrevBlockHash)
 		pow := newPow(block)
 		fmt.Printf("PoW: %s\n\n", strconv.FormatBool(pow.validate()))

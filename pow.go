@@ -9,7 +9,7 @@ import (
 	"math/big"
 )
 
-const targetBits = 24		// the lower the targetBits, the more difficult it is to mine a block, represented by the number of leading zeroes in the hash
+const targetBits = 24	
 
 type proofOfWork struct {
 	block  *block

@@ -13,10 +13,11 @@ type block struct {
 	PrevBlockHash []byte
 	Hash          []byte
 	Nonce         int
+	Height        int		// add a height field to the block, representing the block's position in the blockchain
 }
 
-func newBlock(transactions []*Transaction, prevBlockHash []byte) *block {
-	block := &block{time.Now().Unix(), transactions, prevBlockHash, []byte{}, 0}
+func newBlock(transactions []*Transaction, prevBlockHash []byte, height int) *block {
+	block := &block{time.Now().Unix(), transactions, prevBlockHash, []byte{}, 0, height}
 	pow := newPow(block)
 	nonce, hash := pow.run()
 
@@ -45,7 +46,7 @@ func newBlock(transactions []*Transaction, prevBlockHash []byte) *block {
 // }
 
 func genesisBlock(coinbase *Transaction) *block {
-	return newBlock([]*Transaction{coinbase}, []byte{})
+	return newBlock([]*Transaction{coinbase}, []byte{}, 0)
 }
 
 func (b *block) serialize() []byte {

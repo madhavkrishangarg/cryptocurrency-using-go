@@ -1,4 +1,6 @@
-blockchain.db
+*.db
 blockchain
 chain
-wallets.dat
+*.dat
+*.data
+*.zip

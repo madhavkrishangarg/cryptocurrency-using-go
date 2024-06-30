@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-func (cli* CLI) reindexUTXO() {
-	bc := newBlockchain()
+func (cli* CLI) reindexUTXO(nodeID string) {
+	bc := newBlockchain(nodeID)
 	UTXOSet := UTXOSet{bc}
 	UTXOSet.reindex()
 

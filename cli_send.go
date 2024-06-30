@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func (cli *CLI) send(from string, to string, amount int) {
+func (cli *CLI) send(from string, to string, amount int, nodeID string, mineNow bool) {
 	if !validateAddress(from) {
 		log.Panic("ERROR: Sender address is not valid")
 	}
@@ -14,16 +14,27 @@ func (cli *CLI) send(from string, to string, amount int) {
 		log.Panic("ERROR: Recipient address is not valid")
 	}
 
-	bc := newBlockchain()
+	bc := newBlockchain(nodeID)
 	UTXOSet := UTXOSet{bc}
 	defer bc.db.Close()
 
-	tx := newUTXOTransaction(from, to, amount, &UTXOSet)
-	cbTx := newCoinbaseTX(from, "")		// cbTx is the coinbase transaction, which is the reward for the miner who mines the block
-	txs := []*Transaction{cbTx, tx}		// txs is the list of transactions that will be included in the block
+	wallets, err := newWallets(nodeID)
+	if err != nil {
+		log.Panic(err)
+	}
+	wallet := wallets.getWallet(from)
 
-	newBlock := bc.mineBlock(txs)
-	UTXOSet.update(newBlock)
+	tx := newUTXOTransaction(&wallet, to, amount, &UTXOSet)
+
+	if mineNow {
+		cbTx := newCoinbaseTX(from, "")
+		txs := []*Transaction{cbTx, tx}
+
+		newBlock := bc.mineBlock(txs)
+		UTXOSet.update(newBlock)
+	} else {
+		sendTx(knownNodes[0], tx)
+	}
 
 	fmt.Println("Success!")
 }
