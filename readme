@@ -1,3 +1,0 @@
-to run: go build -o chain *.go
-
-reference: https://jeiwan.net/
